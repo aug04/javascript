@@ -1,9 +1,73 @@
 "use strict";
 
+var directions = {
+	topLeft: 'topLeft',
+	topCenter: 'topCenter',
+	topRight: 'topRight',
+	midLeft: 'midLeft',
+	midCenter: 'midCenter',
+	midRight: 'midRight',
+	botLeft: 'botLeft',
+	botCenter: 'botCenter',
+	botRight: 'botRight'
+};
+
+function getPixel(direction, $obj) {
+	var result = {
+		top: 0,
+		left: 0
+	};
+	
+	switch(direction) {
+	case directions.topLeft:
+		result.top = 50;
+		result.left = ($(window).width() / 8) - ($obj.outerWidth() / 2);
+		break;
+	case directions.topCenter:
+		result.top = 50;
+		result.left = ($(window).width() / 2) - ($obj.outerWidth() / 2);
+		break;
+	case directions.topRight:
+		result.top = 50;
+		result.left = ($(window).width() / 8) * 7 - ($obj.outerWidth() / 2);
+		break;
+	case directions.midLeft:
+		result.top = ($(window).height() / 2) - ($obj.outerHeight() / 2);
+		result.left = ($(window).width() / 8) - ($obj.outerWidth() / 2);
+		break;
+	case directions.midCenter:
+		result.top = ($(window).height() / 2) - ($obj.outerHeight() / 2);
+		result.left = ($(window).width() / 2) - ($obj.outerWidth() / 2);
+		break;
+	case directions.midRight:
+		result.top = ($(window).height() / 2) - ($obj.outerHeight() / 2);
+		result.left = (($(window).width() / 8) * 7) - ($obj.outerWidth() / 2);
+		break;
+	case directions.botLeft:
+		result.top = ($(window).height() - $obj.outerHeight()) - 50;
+		result.left = ($(window).width() / 8) - ($obj.outerWidth() / 2);
+		break;
+	case directions.botCenter:
+		result.top = ($(window).height() - $obj.outerHeight()) - 50;
+		result.left = ($(window).width() / 2) - ($obj.outerWidth() / 2);
+		break;
+	case directions.botRight:
+		result.top = ($(window).height() - $obj.outerHeight()) - 50;
+		result.left = (($(window).width() / 8) * 7) - ($obj.outerWidth() / 2);
+		break;
+	default:
+		result.top = ($(window).height() / 2) - ($obj.outerHeight() / 2);
+		result.left = ($(window).width() / 2) - ($obj.outerWidth() / 2);
+		break;
+	}
+	
+	return result;
+}
+
 (function($) {
 	
 	/** message auto hidden */
-	$.msgAutoHide = function(message, options) {
+	$.msgAutoHide = function(message, options, direction) {
 		var $msg = $('<div id="msg-auto-hidden"></div>');
 		$msg.html(message);
 		
@@ -14,12 +78,11 @@
 		
 		$('body').append($msg);
 		$msg.hide().css(opts.css);
-		var _top = ($(window).height() / 8) - ($msg.outerHeight() / 2);
-		var _left = ($(window).width() / 2) - ($msg.outerWidth() / 2);
+		var pixel = getPixel(direction, $msg);
 		var _extend = {
 			css: {
-				top: _top + 'px',
-				left: _left + 'px'
+				top: pixel.top + 'px',
+				left: pixel.left + 'px'
 			}
 		};
 		
@@ -142,7 +205,7 @@
 		
 		$('body').append($msg);
 		$msg.hide().css(opts.css);
-		var _top = ($(window).height() / 8) - ($msg.outerHeight() / 2);
+		var _top = 50;
 		var _left = ($(window).width() / 2) - ($msg.outerWidth() / 2);
 		var _extend = {
 			css: {
@@ -181,5 +244,87 @@
 			no: 'No'
 		}
 	};
+	
+	/** message */
+	$.msg = function(message, options) {
+		var $msg = $('<div id="msg-confirm"></div>');
+		var $title = $('<div id="msg-title"></div>');
+		var $contents = $('<div id="msg-contents"></div>');
+		$contents.html(message).css({
+			padding: '15px 10px'
+		});
+		
+		if (options == undefined || typeof(options) !== 'object')
+			options = {};
+		
+		var opts = $.extend(true, {}, $.msg.defaults, options);
+		
+		var $contentTitle = $('<div></div>');
+		$contentTitle.append('<span style="float: left; padding: 7px 10px; font-weight: bold;">' + opts.title + '</span>');
+		var $btnClose = $('<span>&times;</span>');
+		$btnClose.css({
+			'font-weight': 'bold',
+			cursor: 'pointer',
+			float: 'right',
+			padding: '0px 2px',
+			'margin-top': '5px',
+			'margin-right': '5px'
+		});
+		
+		$btnClose.on('click', function(e) {
+			$msg.fadeOut(opts.fadeOutTime, function() {
+				$msg.remove();
+			});
+			
+			return false;
+		});
+		
+		$contentTitle.append($btnClose).append('<div style="clear: both;"></div>');
+		$contentTitle.css({
+			'border-bottom': '1px solid #DDD'
+		});
+		
+		$title.html($contentTitle);
+		$msg.append($title);
+		$msg.append($contents);
+		
+		$('body').append($msg);
+		$msg.hide().css(opts.css);
+		var _top = ($(window).height() / 8) - ($msg.outerHeight() / 2);
+		var _left = ($(window).width() / 2) - ($msg.outerWidth() / 2);
+		var _extend = {
+			css: {
+				top: _top + 'px',
+				left: _left + 'px'
+			}
+		};
+		
+		$.extend(true, opts, _extend);
+		
+		$msg.css(opts.css);
+		$msg.fadeIn(opts.fadeInTime);
+	};
+	
+	/** message confirm default options */
+	$.msg.defaults = {
+		title: 'Notice',
+		fadeInTime: 0,
+		fadeOutTime: 0,
+		css: {
+			position: 'absolute',
+			border: '1px solid #DDD',
+			'border-radius': '4px',
+			display: 'none',
+			background: '#FFF',
+			color: '#333',
+			'font-family': 'Arial, Helvetica, Tahoma',
+			'font-style': 'none',
+			'font-size': '12px',
+			'min-width': '200px',
+			'z-index': '99999'
+		},
+		direction: $.msg.directions.topCenter
+	};
+	
 	
 })(jQuery);

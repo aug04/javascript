@@ -22,13 +22,16 @@
 			<div>
 				<button id="btn-msg-confirm">Message Confirm</button>
 			</div>
+			<div>
+				<button id="btn-msg">Message</button>
+			</div>
 		</div>
 		<script type="text/javascript" src="vendor/jquery/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="dist/augjs.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(e) {
 				$('#btn-msg-auto-hide').on('click', function() {
-					$.msgAutoHide('Test the message place here');
+					$.msgAutoHide('Test the message place here', null, directions.botRight);
 				});
 				
 				$('#btn-msg-confirm').on('click', function() {
@@ -44,6 +47,10 @@
 						$.msgAutoHide('You are not confirm!');
 					});
 					
+				});
+
+				$('#btn-msg').on('click', function() {
+					$.msg('Test the message place here');
 				});
 			});
 		</script>
