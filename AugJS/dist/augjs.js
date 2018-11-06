@@ -1,5 +1,8 @@
 "use strict";
 
+var defaultOffset = 50;
+var btnCloseFontSize = 20;
+
 var directions = {
 	topLeft: 'topLeft',
 	topCenter: 'topCenter',
@@ -20,15 +23,15 @@ function getPixel(direction, $obj) {
 	
 	switch(direction) {
 	case directions.topLeft:
-		result.top = 50;
+		result.top = defaultOffset;
 		result.left = ($(window).width() / 8) - ($obj.outerWidth() / 2);
 		break;
 	case directions.topCenter:
-		result.top = 50;
+		result.top = defaultOffset;
 		result.left = ($(window).width() / 2) - ($obj.outerWidth() / 2);
 		break;
 	case directions.topRight:
-		result.top = 50;
+		result.top = defaultOffset;
 		result.left = ($(window).width() / 8) * 7 - ($obj.outerWidth() / 2);
 		break;
 	case directions.midLeft:
@@ -44,15 +47,15 @@ function getPixel(direction, $obj) {
 		result.left = (($(window).width() / 8) * 7) - ($obj.outerWidth() / 2);
 		break;
 	case directions.botLeft:
-		result.top = ($(window).height() - $obj.outerHeight()) - 50;
+		result.top = ($(window).height() - $obj.outerHeight()) - defaultOffset;
 		result.left = ($(window).width() / 8) - ($obj.outerWidth() / 2);
 		break;
 	case directions.botCenter:
-		result.top = ($(window).height() - $obj.outerHeight()) - 50;
+		result.top = ($(window).height() - $obj.outerHeight()) - defaultOffset;
 		result.left = ($(window).width() / 2) - ($obj.outerWidth() / 2);
 		break;
 	case directions.botRight:
-		result.top = ($(window).height() - $obj.outerHeight()) - 50;
+		result.top = ($(window).height() - $obj.outerHeight()) - defaultOffset;
 		result.left = (($(window).width() / 8) * 7) - ($obj.outerWidth() / 2);
 		break;
 	default:
@@ -137,8 +140,9 @@ function getPixel(direction, $obj) {
 			cursor: 'pointer',
 			float: 'right',
 			padding: '0px 2px',
-			'margin-top': '5px',
-			'margin-right': '5px'
+			'margin-top': '3px',
+			'margin-right': '5px',
+			'font-size': btnCloseFontSize + 'px'
 		});
 		
 		$btnClose.on('click', function(e) {
@@ -267,8 +271,9 @@ function getPixel(direction, $obj) {
 			cursor: 'pointer',
 			float: 'right',
 			padding: '0px 2px',
-			'margin-top': '5px',
-			'margin-right': '5px'
+			'margin-top': '3px',
+			'margin-right': '5px',
+			'font-size': btnCloseFontSize + 'px'
 		});
 		
 		$btnClose.on('click', function(e) {
@@ -279,9 +284,13 @@ function getPixel(direction, $obj) {
 			return false;
 		});
 		
+		if (opts.type && opts.type !== 'normal') {
+			$.extend(true, opts.css, opts.style[opts.type]);
+		}
+		
 		$contentTitle.append($btnClose).append('<div style="clear: both;"></div>');
 		$contentTitle.css({
-			'border-bottom': '1px solid #DDD'
+			'border-bottom': '1px solid ' + opts.css['border-color']
 		});
 		
 		$title.html($contentTitle);
@@ -310,10 +319,9 @@ function getPixel(direction, $obj) {
 		title: 'Notice',
 		fadeInTime: 0,
 		fadeOutTime: 0,
+		type: 'normal',
 		css: {
 			position: 'absolute',
-			border: '1px solid #DDD',
-			'border-radius': '4px',
 			display: 'none',
 			background: '#FFF',
 			color: '#333',
@@ -321,9 +329,35 @@ function getPixel(direction, $obj) {
 			'font-style': 'none',
 			'font-size': '12px',
 			'min-width': '200px',
-			'z-index': '99999'
+			'z-index': '99999',
+		    'margin-bottom': '20px',
+		    border: '1px solid transparent',
+		    'border-radius': '4px',
+		    'border-color': '#DDD'
 		},
-		direction: $.msg.directions.topCenter
+		direction: directions.topCenter,
+		style: {
+			success: {
+				color: '#3c763d',
+			    'background-color': '#dff0d8',
+			    'border-color': '#d6e9c6'
+			},
+			info: {
+				color: '#31708f',
+			    'background-color': '#d9edf7',
+			    'border-color': '#bce8f1'
+			},
+			warning: {
+				color: '#8a6d3b',
+			    'background-color': '#fcf8e3',
+			    'border-color': '#faebcc'
+			},
+			danger: {
+				color: '#a94442',
+			    'background-color': '#f2dede',
+			    'border-color': '#ebccd1'
+			}
+		}
 	};
 	
 	
